@@ -16,26 +16,30 @@
 
 import axios from 'axios';
 
+
 export const FETCH_START = "FETCH_START";
-export const FETCH_END = "FETCH_END";
 export const FETCH_SUCCESS = "FETCH_SUCCESS";
 export const FETCH_FAIL = "FETCH_FAIL"
-
-export const ADD_SMURF = 'ADD_SMURF';
-export const UPD_SMURF = 'UPDATE_SMURF';
-export const DEL_SMURF = 'DELETE_SMURF';
 
 export function addSmurf(data, id=-1)
 {
   var putid = id.toString(10);
-  var func = "axios.put";
-  if(id === -1) { putid = ""; func = "axios.post"}
-  return function(dispatch) {
-    return eval(func)(`http://localhost:3333/smurfs/${putid}`, data).then(res => {
-      const loggedInAction = { type: ADD_SMURF, payload: res.data }
-      dispatch(loggedInAction);
-    });
-  };
+  if(id === -1) {
+    return function(dispatch) {
+      return axios.post(`http://localhost:3333/smurfs/`, data).then(res => {
+        const loggedInAction = { type: FETCH_SUCCESS, payload: res.data }
+        dispatch(loggedInAction);
+      });
+    };
+  }
+  {
+    return function(dispatch) {
+      return axios.put(`http://localhost:3333/smurfs/${id}`, data).then(res => {
+        const loggedInAction = { type: FETCH_SUCCESS, payload: res.data }
+        dispatch(loggedInAction);
+      });
+    };
+  }
 }
 
 export function updateSmurf(data, id)
@@ -43,17 +47,23 @@ export function updateSmurf(data, id)
  
 }
 
-export function deleteSmurf(data)
+export function deleteSmurf(id)
 {
+  return function(dispatch) {
+    return axios.delete(`http://localhost:3333/smurfs/${id}`).then(res => {
+      const loggedInAction = { type: FETCH_SUCCESS, payload: res.data }
+      dispatch(loggedInAction);
+    });
+  } 
 }
 
-export function getSmurfs()
+export const getSmurfs = () => dispatch => 
 {
   dispatch({ type: FETCH_START });
   axios
     .get('http://localhost:3333/smurfs/')
     .then(res =>{
-      dispatch({ type: FETCH_SUCCESS, payload: res.data.results })
+      dispatch({ type: FETCH_SUCCESS, payload: res.data })
     }
     )
     .catch(err => { dispatch({ type: FETCH_FAIL, payload: err })});
