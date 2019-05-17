@@ -22,6 +22,8 @@
   Components can then read your store as, `state` and not `state.fooReducer`.
 */
 
+import {FETCH_START,FETCH_SUCCESS,FETCH_FAIL} from "../actions"
+
 const initialState =
 {
   smurfs: [],
@@ -34,6 +36,29 @@ const initialState =
 
 export const smurfer = (state = initialState, action) => 
 {
+  switch(action.type)
+  {
+    case FETCH_START:
+      console.log("in");
+      return{
+        ...state,
+        fetchingSmurfs: true
+      }
+    case FETCH_SUCCESS:
+      console.log(action.payload);
+        return{
+          ...state,
+          fetchingSmurfs: false,
+          smurfs: action.payload
+        }
+    case FETCH_FAIL:
+      return {
+        ...state,
+        fetchingSmurfs: false,
+        error: action.payload.message
+      }
+    default:
+        return state;
+  }
   
-  return state;
 }
