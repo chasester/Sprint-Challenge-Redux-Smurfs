@@ -5,6 +5,7 @@ import './App.css';
 import './SmurfList'
 import { SmurfList } from './SmurfList';
 import {addSmurf, updateSmurf, deleteSmurf, getSmurfs} from "../actions"
+import SmurfForm from './SmurfForm';
 /*
  to wire this component up you're going to need a few things.
  I'll let you do this part on your own. 
@@ -18,11 +19,13 @@ class App extends Component {
     this.props.getSmurfs();
   }
   render() {
+    console.log(this.props.smurfs);
     if(this.props.error !== undefined && this.props.error !== "" && this.props.error.length > 0) return <div>{this.props.error}</div>
-    if(this.props.smurfs=== undefined || this.props.smurfs.length===0 || this.props.fetchingSmurfs) return <div className="App">Loading...</div>
+    if(this.props.smurfs=== undefined || this.props.smurfs.length===0 && this.props.fetchingSmurfs) return <div className="App">Loading...</div>
     return (
       <div className="App">
-        <SmurfList smurfs={this.props.smurfs}/>
+        <SmurfList smurfs={this.props.smurfs} delete={(id) => this.props.deleteSmurf(id)}/>
+        <SmurfForm />
       </div>
     );
   }
